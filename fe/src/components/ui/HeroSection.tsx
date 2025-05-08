@@ -15,7 +15,8 @@ export default function HeroSection() {
 
   // GSAP animations
   useEffect(() => {
-    if (!heroRef.current || !textRef.current || !circleRef.current) return;
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || !heroRef.current || !textRef.current || !circleRef.current) return;
 
     const tl = gsap.timeline();
 
@@ -38,11 +39,11 @@ export default function HeroSection() {
     // Mouse move effect for the circle
     const handleMouseMove = (e: MouseEvent) => {
       if (!heroRef.current || !circleRef.current) return;
-      
+
       const { left, top, width, height } = heroRef.current.getBoundingClientRect();
       const x = (e.clientX - left) / width - 0.5;
       const y = (e.clientY - top) / height - 0.5;
-      
+
       gsap.to(circleRef.current, {
         x: x * 30,
         y: y * 30,

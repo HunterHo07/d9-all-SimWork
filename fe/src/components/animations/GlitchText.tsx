@@ -24,7 +24,8 @@ export default function GlitchText({
   const glitchChars = '!<>-_\\/[]{}—=+*^?#________';
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || !containerRef.current) return;
 
     // Create a GSAP timeline
     const tl = gsap.timeline({ paused: true });
@@ -32,7 +33,7 @@ export default function GlitchText({
 
     const textElement = containerRef.current;
     const originalText = text;
-    
+
     // Function to generate a random glitched version of the text
     const getGlitchedText = () => {
       return originalText
@@ -68,7 +69,7 @@ export default function GlitchText({
 
     // Set up random glitching when not hovering
     let glitchInterval: NodeJS.Timeout;
-    
+
     const startRandomGlitching = () => {
       glitchInterval = setInterval(() => {
         if (Math.random() < glitchFrequency && !isHovering) {

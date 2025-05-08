@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 migrate((db) => {
   const dao = new Dao(db);
-  
+
   // Create roles
   const roles = [
     {
@@ -35,15 +35,15 @@ migrate((db) => {
       "color": "#8b5cf6"
     }
   ];
-  
+
   const rolesCollection = dao.findCollectionByNameOrId("roles");
-  
+
   for (const role of roles) {
     const record = new Record(rolesCollection);
     record.load(role);
     dao.saveRecord(record);
   }
-  
+
   // Create simulations
   const simulations = [
     {
@@ -87,18 +87,18 @@ migrate((db) => {
       "isActive": true
     }
   ];
-  
+
   const simulationsCollection = dao.findCollectionByNameOrId("simulations");
-  
+
   for (const simulation of simulations) {
     const record = new Record(simulationsCollection);
     record.load(simulation);
     dao.saveRecord(record);
   }
-  
+
   // Create tasks for the Developer simulation
   const devSimulationId = dao.findFirstRecordByData("simulations", "title", "Frontend Bug Hunt").id;
-  
+
   const devTasks = [
     {
       "title": "Fix the Counter Component",
@@ -141,16 +141,16 @@ migrate((db) => {
       })
     }
   ];
-  
+
   const tasksCollection = dao.findCollectionByNameOrId("tasks");
-  
+
   for (const task of devTasks) {
     const record = new Record(tasksCollection);
     record.load(task);
     dao.saveRecord(record);
   }
-  
-  return dao.getDatabase();
+
+  return db;
 }, (db) => {
   // No need for down migration as this is seed data
   return db;
