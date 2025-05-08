@@ -113,8 +113,22 @@ SimulEx is designed to work across devices:
 
 ## 🌐 Deployment
 
-### Frontend Deployment
-The Next.js application can be deployed to Vercel, Netlify, or any Node.js hosting service.
+### GitHub Pages Deployment
+The frontend is configured for GitHub Pages deployment. To deploy:
+
+```bash
+cd fe
+npm run deploy
+```
+
+This will build the Next.js application, create a `.nojekyll` file (required for GitHub Pages), and deploy to the `gh-pages` branch.
+
+The deployed site will be available at: https://hunterho07.github.io/d9-all-SeimalEx/
+
+Alternatively, the GitHub Actions workflow will automatically deploy the site when changes are pushed to the `main` branch.
+
+### Frontend Deployment Alternatives
+The Next.js application can also be deployed to Vercel, Netlify, or any Node.js hosting service.
 
 ### Backend Deployment
 PocketBase can be deployed to any VPS or container service.

@@ -10,6 +10,8 @@ coverage
 .next/
 out/
 build
+.turbo
+dist/
 
 # misc
 .DS_Store
@@ -21,7 +23,11 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -34,3 +40,20 @@ next-env.d.ts
 be/pocketbase
 be/pocketbase.exe
 be/pb_data/
+be/pb_data/data.db
+be/pb_data/logs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
