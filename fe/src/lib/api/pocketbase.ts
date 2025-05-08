@@ -48,6 +48,7 @@ export interface Simulation {
   id: string;
   title: string;
   description: string;
+  longDescription?: string;
   role: string;
   expand?: {
     role: Role;
@@ -56,12 +57,21 @@ export interface Simulation {
   duration: number;
   image?: string;
   isActive: boolean;
+  skills: string[];
+  objectives?: string[];
+  resources?: Array<{
+    title: string;
+    url: string;
+    type?: string;
+    description?: string;
+  }>;
 }
 
 export interface Task {
   id: string;
   title: string;
   description: string;
+  instructions?: string;
   simulation: string;
   expand?: {
     simulation: Simulation;
@@ -69,6 +79,7 @@ export interface Task {
   type: 'code' | 'design' | 'decision' | 'data' | 'ai';
   difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
   timeLimit?: number;
+  duration?: number;
   resources?: any;
   evaluation?: any;
   order?: number;
@@ -90,6 +101,7 @@ export interface Result {
   accuracy?: number;
   speed?: number;
   submission?: any;
+  answer?: string;
   feedback?: string;
   recording?: any;
   completed: boolean;

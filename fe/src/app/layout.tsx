@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import FuturisticNavbar from "@/components/ui/FuturisticNavbar";
 import FuturisticFooter from "@/components/ui/FuturisticFooter";
 import { DeploymentBanner } from "@/components/ui/DeploymentBanner";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
+        <Script src="/spa-redirect.js" strategy="beforeInteractive" />
         <DeploymentBanner />
         <FuturisticNavbar />
         <main className="flex-grow">

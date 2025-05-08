@@ -39,7 +39,11 @@ export default function TaskClient() {
 
         setSimulation(simulationData);
         setTask(taskData);
-        setTimeLeft(taskData.timeLimit * 60); // Convert minutes to seconds
+        if (taskData.timeLimit) {
+          setTimeLeft(taskData.timeLimit * 60); // Convert minutes to seconds
+        } else {
+          setTimeLeft(null); // No time limit
+        }
       } catch (error) {
         console.error('Error fetching task data:', error);
         toast.error('Failed to load task data');
@@ -100,7 +104,7 @@ export default function TaskClient() {
         answer,
         score,
         completed: true,
-        startTime: new Date(Date.now() - (task.timeLimit * 60 * 1000) + (timeLeft || 0) * 1000).toISOString(),
+        startTime: new Date(Date.now() - ((task.timeLimit || 0) * 60 * 1000) + (timeLeft || 0) * 1000).toISOString(),
         endTime: new Date().toISOString(),
       });
 
@@ -170,10 +174,17 @@ export default function TaskClient() {
               <h1 className="text-2xl font-bold mb-4">{task.title}</h1>
               <div className="prose prose-invert max-w-none">
                 <p>{task.description}</p>
-                <div className="mt-4 p-4 bg-white/5 rounded-md">
-                  <h3 className="text-lg font-semibold mb-2">Task Instructions:</h3>
-                  <p>{task.instructions}</p>
-                </div>
+                {task.instructions ? (
+                  <div className="mt-4 p-4 bg-white/5 rounded-md">
+                    <h3 className="text-lg font-semibold mb-2">Task Instructions:</h3>
+                    <p>{task.instructions}</p>
+                  </div>
+                ) : (
+                  <div className="mt-4 p-4 bg-white/5 rounded-md">
+                    <h3 className="text-lg font-semibold mb-2">Task Instructions:</h3>
+                    <p>{task.description}</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

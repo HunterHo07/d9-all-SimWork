@@ -127,14 +127,20 @@ export default function SimulationClient() {
                   <CardContent className="pt-6">
                     <h3 className="text-xl font-semibold mb-2">Skills</h3>
                     <div className="flex flex-wrap gap-2">
-                      {simulation.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-white/10 rounded-full text-sm"
-                        >
-                          {skill}
+                      {simulation.skills && simulation.skills.length > 0 ? (
+                        simulation.skills.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-white/10 rounded-full text-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="px-3 py-1 bg-white/10 rounded-full text-sm">
+                          No skills specified
                         </span>
-                      ))}
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -142,13 +148,18 @@ export default function SimulationClient() {
 
               <div className="prose prose-invert max-w-none">
                 <h2 className="text-2xl font-bold mb-4">About this Simulation</h2>
-                <p>{simulation.longDescription}</p>
-                <h2 className="text-2xl font-bold mb-4 mt-8">Learning Objectives</h2>
-                <ul>
-                  {simulation.objectives.map((objective, index) => (
-                    <li key={index}>{objective}</li>
-                  ))}
-                </ul>
+                <p>{simulation.longDescription || simulation.description}</p>
+
+                {simulation.objectives && simulation.objectives.length > 0 && (
+                  <>
+                    <h2 className="text-2xl font-bold mb-4 mt-8">Learning Objectives</h2>
+                    <ul>
+                      {simulation.objectives.map((objective, index) => (
+                        <li key={index}>{objective}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="tasks" className="mt-6">
@@ -163,7 +174,7 @@ export default function SimulationClient() {
                       <p className="text-white/70 mb-4">{task.description}</p>
                       <div className="flex justify-between items-center">
                         <div className="text-sm text-white/50">
-                          {task.duration} minutes
+                          {task.duration ? `${task.duration} minutes` : (task.timeLimit ? `${task.timeLimit} minutes` : 'Duration not specified')}
                         </div>
                         <Button
                           onClick={() => handleStartTask(task.id)}
@@ -180,24 +191,32 @@ export default function SimulationClient() {
             <TabsContent value="resources" className="mt-6">
               <div className="prose prose-invert max-w-none">
                 <h2 className="text-2xl font-bold mb-4">Resources</h2>
-                <p>
-                  The following resources will help you succeed in this simulation:
-                </p>
-                <ul>
-                  {simulation.resources.map((resource, index) => (
-                    <li key={index}>
-                      <a
-                        href={resource.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300"
-                      >
-                        {resource.title}
-                      </a>{' '}
-                      - {resource.description}
-                    </li>
-                  ))}
-                </ul>
+                {simulation.resources && simulation.resources.length > 0 ? (
+                  <>
+                    <p>
+                      The following resources will help you succeed in this simulation:
+                    </p>
+                    <ul>
+                      {simulation.resources.map((resource, index) => (
+                        <li key={index}>
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:text-blue-300"
+                          >
+                            {resource.title}
+                          </a>{' '}
+                          {resource.description && `- ${resource.description}`}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <p>
+                    No additional resources available for this simulation.
+                  </p>
+                )}
               </div>
             </TabsContent>
           </Tabs>

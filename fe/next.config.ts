@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   },
   output: 'export', // Enable static site generation for GitHub Pages
   // For GitHub Pages deployment
-  basePath: process.env.NODE_ENV === 'production' ? '/d9-all-SeimalEx' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/d9-all-SeimalEx' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/d9-all-SimWork' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/d9-all-SimWork' : '',
   // Disable ESLint during build
   eslint: {
     ignoreDuringBuilds: true,
