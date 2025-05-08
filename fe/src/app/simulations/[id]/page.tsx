@@ -10,6 +10,8 @@ import FadeIn from '@/components/animations/FadeIn';
 import GlitchText from '@/components/animations/GlitchText';
 import { api, Simulation, Task } from '@/lib/api/pocketbase';
 
+// Using server-side rendering instead of static generation
+
 export default function SimulationDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -49,7 +51,7 @@ export default function SimulationDetailPage() {
   const handleStartSimulation = async () => {
     try {
       if (!simulation) return;
-      
+
       // Create a new result record to track this simulation session
       const result = await api.results.create({
         simulation: simulation.id,
@@ -57,7 +59,7 @@ export default function SimulationDetailPage() {
         startTime: new Date().toISOString(),
         completed: false,
       });
-      
+
       // Navigate to the task page
       router.push(`/simulations/${simulation.id}/tasks/${tasks[0]?.id}`);
     } catch (err) {
@@ -110,15 +112,15 @@ export default function SimulationDetailPage() {
       <div className="pt-24 pb-12 relative overflow-hidden">
         {/* Background elements */}
         <div className="absolute inset-0 bg-grid opacity-20 z-0"></div>
-        <div 
+        <div
           className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[100px] z-0"
           style={{ backgroundColor: `${roleColor}10` }}
         ></div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn>
             <div className="flex items-center justify-center mb-4">
-              <div 
+              <div
                 className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
                 style={{ backgroundColor: roleColor }}
               >
@@ -134,7 +136,7 @@ export default function SimulationDetailPage() {
                 />
               </h1>
             </div>
-            
+
             <div className="flex items-center justify-center mb-6 space-x-4">
               <div className={`px-3 py-1 rounded-full text-sm font-medium text-white ${difficultyInfo.color}`}>
                 {difficultyInfo.label}
@@ -146,7 +148,7 @@ export default function SimulationDetailPage() {
                 <span className="font-medium">{tasks.length}</span> tasks
               </div>
             </div>
-            
+
             <p className="text-white/70 text-center max-w-3xl mx-auto mb-8">
               {simulation.description}
             </p>
@@ -170,7 +172,7 @@ export default function SimulationDetailPage() {
               </TabsTrigger>
             </TabsList>
           </div>
-          
+
           <TabsContent value="overview" className="mt-0">
             <FadeIn>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -179,11 +181,11 @@ export default function SimulationDetailPage() {
                     <CardContent className="p-6">
                       <h2 className="text-2xl font-bold mb-4 text-white">About This Simulation</h2>
                       <p className="text-white/70 mb-6">
-                        This simulation is designed to test and improve your skills as a {simulation.expand?.role?.title}. 
-                        You will face realistic challenges that mirror the actual work environment and tasks you would 
+                        This simulation is designed to test and improve your skills as a {simulation.expand?.role?.title}.
+                        You will face realistic challenges that mirror the actual work environment and tasks you would
                         encounter in this role.
                       </p>
-                      
+
                       <h3 className="text-xl font-bold mb-3 text-white">What You'll Learn</h3>
                       <ul className="list-disc list-inside text-white/70 mb-6 space-y-2">
                         <li>Practical application of {simulation.expand?.role?.title} skills</li>
@@ -192,38 +194,38 @@ export default function SimulationDetailPage() {
                         <li>Adapting to changing requirements</li>
                         <li>Industry best practices and standards</li>
                       </ul>
-                      
+
                       <h3 className="text-xl font-bold mb-3 text-white">How You'll Be Evaluated</h3>
                       <p className="text-white/70">
-                        Your performance will be measured across multiple dimensions including accuracy, 
-                        speed, decision quality, and adherence to best practices. Our AI-powered evaluation 
+                        Your performance will be measured across multiple dimensions including accuracy,
+                        speed, decision quality, and adherence to best practices. Our AI-powered evaluation
                         system provides detailed feedback to help you improve.
                       </p>
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 <div>
                   <Card className="bg-black/40 backdrop-blur-sm border border-white/10 mb-8">
                     <CardContent className="p-6">
                       <h2 className="text-xl font-bold mb-4 text-white">Simulation Details</h2>
-                      
+
                       <div className="space-y-4">
                         <div>
                           <h3 className="text-sm font-medium text-white/50 mb-1">Role</h3>
                           <p className="text-white">{simulation.expand?.role?.title}</p>
                         </div>
-                        
+
                         <div>
                           <h3 className="text-sm font-medium text-white/50 mb-1">Difficulty</h3>
                           <p className="text-white">{difficultyInfo.label}</p>
                         </div>
-                        
+
                         <div>
                           <h3 className="text-sm font-medium text-white/50 mb-1">Duration</h3>
                           <p className="text-white">{simulation.duration} minutes</p>
                         </div>
-                        
+
                         <div>
                           <h3 className="text-sm font-medium text-white/50 mb-1">Tasks</h3>
                           <p className="text-white">{tasks.length} tasks</p>
@@ -231,11 +233,11 @@ export default function SimulationDetailPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  
-                  <Button 
+
+                  <Button
                     className="w-full py-6 text-lg"
-                    style={{ 
-                      background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)` 
+                    style={{
+                      background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)`
                     }}
                     onClick={handleStartSimulation}
                   >
@@ -245,7 +247,7 @@ export default function SimulationDetailPage() {
               </div>
             </FadeIn>
           </TabsContent>
-          
+
           <TabsContent value="tasks" className="mt-0">
             <FadeIn>
               <div className="grid grid-cols-1 gap-4">
@@ -271,13 +273,13 @@ export default function SimulationDetailPage() {
               </div>
             </FadeIn>
           </TabsContent>
-          
+
           <TabsContent value="requirements" className="mt-0">
             <FadeIn>
               <Card className="bg-black/40 backdrop-blur-sm border border-white/10">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-4 text-white">Technical Requirements</h2>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-xl font-bold mb-2 text-white">System Requirements</h3>
@@ -288,7 +290,7 @@ export default function SimulationDetailPage() {
                         <li>WebGL-enabled graphics</li>
                       </ul>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-xl font-bold mb-2 text-white">Knowledge Prerequisites</h3>
                       <ul className="list-disc list-inside text-white/70 space-y-1">
@@ -297,7 +299,7 @@ export default function SimulationDetailPage() {
                         <li>Problem-solving skills</li>
                       </ul>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-xl font-bold mb-2 text-white">Recommended Setup</h3>
                       <ul className="list-disc list-inside text-white/70 space-y-1">

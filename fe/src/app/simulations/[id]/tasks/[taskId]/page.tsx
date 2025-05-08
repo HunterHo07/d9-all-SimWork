@@ -10,6 +10,8 @@ import FadeIn from '@/components/animations/FadeIn';
 import { api, Simulation, Task, Result } from '@/lib/api/pocketbase';
 import { toast } from 'sonner';
 
+// Using server-side rendering instead of static generation
+
 export default function TaskPage() {
   const params = useParams();
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function TaskPage() {
     speed: number;
     feedback: string;
   } | null>(null);
-  
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<Date | null>(null);
 
@@ -38,15 +40,15 @@ export default function TaskPage() {
         setLoading(true);
         const simulationId = params.id as string;
         const taskId = params.taskId as string;
-        
+
         const [simulationData, taskData] = await Promise.all([
           api.simulations.getById(simulationId),
           api.tasks.getById(taskId),
         ]);
-        
+
         setSimulation(simulationData);
         setTask(taskData);
-        
+
         // Get or create result
         const user = await api.auth.getUser();
         if (user) {
@@ -54,10 +56,10 @@ export default function TaskPage() {
           const currentResult = results.find(
             r => r.simulation === simulationId && r.task === taskId && !r.completed
           );
-          
+
           if (currentResult) {
             setResult(currentResult);
-            
+
             // Set timer if task has a time limit
             if (taskData.timeLimit) {
               const startTime = new Date(currentResult.startTime);
@@ -75,9 +77,9 @@ export default function TaskPage() {
               startTime: new Date().toISOString(),
               completed: false,
             });
-            
+
             setResult(newResult);
-            
+
             // Set timer if task has a time limit
             if (taskData.timeLimit) {
               setTimeLeft(taskData.timeLimit);
@@ -85,7 +87,7 @@ export default function TaskPage() {
             }
           }
         }
-        
+
         setError(null);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -98,7 +100,7 @@ export default function TaskPage() {
     if (params.id && params.taskId) {
       fetchData();
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -120,7 +122,7 @@ export default function TaskPage() {
         });
       }, 1000);
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -144,20 +146,20 @@ export default function TaskPage() {
   // Handle submission
   const handleSubmit = async () => {
     if (!result || !task) return;
-    
+
     try {
       setIsSubmitting(true);
-      
+
       // Calculate time taken
       const endTime = new Date();
       const startTime = startTimeRef.current || new Date(result.startTime);
       const timeTakenSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-      
+
       // Generate mock evaluation (in a real app, this would be done by the backend)
       const score = Math.floor(Math.random() * 30) + 70; // 70-100
       const accuracy = Math.floor(Math.random() * 20) + 80; // 80-100
       const speed = Math.min(100, Math.floor((task.timeLimit || 600) / timeTakenSeconds * 100));
-      
+
       // Update result
       await api.results.update(result.id, {
         endTime: endTime.toISOString(),
@@ -167,7 +169,7 @@ export default function TaskPage() {
         feedback: `You completed this task with a score of ${score}%. Your accuracy was ${accuracy}% and your speed rating was ${speed}%.`,
         completed: true,
       });
-      
+
       // Set feedback
       setFeedback({
         score,
@@ -175,10 +177,10 @@ export default function TaskPage() {
         speed,
         feedback: `You completed this task with a score of ${score}%. Your accuracy was ${accuracy}% and your speed rating was ${speed}%.`,
       });
-      
+
       // Show feedback dialog
       setShowFeedback(true);
-      
+
     } catch (err) {
       console.error('Error submitting task:', err);
       toast.error('Failed to submit task. Please try again.');
@@ -190,7 +192,7 @@ export default function TaskPage() {
   // Handle continue to next task
   const handleContinue = () => {
     if (!simulation) return;
-    
+
     // In a real app, you would navigate to the next task or completion page
     router.push(`/simulations/${simulation.id}`);
   };
@@ -220,12 +222,12 @@ export default function TaskPage() {
       <div className="pt-24 pb-6 relative overflow-hidden">
         {/* Background elements */}
         <div className="absolute inset-0 bg-grid opacity-20 z-0"></div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <div 
+                <div
                   className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
                   style={{ backgroundColor: roleColor }}
                 >
@@ -237,7 +239,7 @@ export default function TaskPage() {
                   {simulation.title}
                 </h1>
               </div>
-              
+
               {timeLeft !== null && (
                 <div className="bg-black/40 backdrop-blur-sm border border-white/10 px-4 py-2 rounded-full">
                   <div className="flex items-center">
@@ -266,23 +268,23 @@ export default function TaskPage() {
                   <p className="text-white/70 mb-6 whitespace-pre-line">
                     {task.description}
                   </p>
-                  
+
                   {/* Task content would go here - this would be different for each task type */}
                   <div className="border border-white/10 rounded-lg p-6 bg-black/60">
                     <h3 className="text-xl font-bold mb-4 text-white">Task Workspace</h3>
-                    
+
                     {task.type === 'code' && (
                       <div className="font-mono text-sm text-white/80 bg-black/80 p-4 rounded-md">
                         <pre>{JSON.parse(task.resources || '{}').files?.[0]?.content || 'Code editor would be here'}</pre>
                       </div>
                     )}
-                    
+
                     {task.type === 'design' && (
                       <div className="text-center py-12 text-white/70">
                         Design canvas would be here
                       </div>
                     )}
-                    
+
                     {task.type === 'decision' && (
                       <div className="space-y-4">
                         <p className="text-white/70">Make your decision by selecting one of the options below:</p>
@@ -295,13 +297,13 @@ export default function TaskPage() {
                         </div>
                       </div>
                     )}
-                    
+
                     {task.type === 'data' && (
                       <div className="text-center py-12 text-white/70">
                         Data entry form would be here
                       </div>
                     )}
-                    
+
                     {task.type === 'ai' && (
                       <div className="text-center py-12 text-white/70">
                         AI prompt engineering interface would be here
@@ -311,13 +313,13 @@ export default function TaskPage() {
                 </CardContent>
               </Card>
             </FadeIn>
-            
+
             <FadeIn delay={0.2}>
               <div className="flex justify-end">
-                <Button 
+                <Button
                   className="px-8 py-3 text-lg"
-                  style={{ 
-                    background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)` 
+                  style={{
+                    background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)`
                   }}
                   onClick={handleSubmit}
                   disabled={isSubmitting}
@@ -327,31 +329,31 @@ export default function TaskPage() {
               </div>
             </FadeIn>
           </div>
-          
+
           <div>
             <FadeIn delay={0.1}>
               <Card className="bg-black/40 backdrop-blur-sm border border-white/10 mb-8 sticky top-24">
                 <CardContent className="p-6">
                   <h2 className="text-xl font-bold mb-4 text-white">Task Information</h2>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-sm font-medium text-white/50 mb-1">Type</h3>
                       <p className="text-white capitalize">{task.type}</p>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-sm font-medium text-white/50 mb-1">Difficulty</h3>
                       <p className="text-white capitalize">{task.difficulty}</p>
                     </div>
-                    
+
                     {task.timeLimit && (
                       <div>
                         <h3 className="text-sm font-medium text-white/50 mb-1">Time Limit</h3>
                         <p className="text-white">{Math.floor(task.timeLimit / 60)} minutes</p>
                       </div>
                     )}
-                    
+
                     <div>
                       <h3 className="text-sm font-medium text-white/50 mb-1">Evaluation Criteria</h3>
                       <ul className="list-disc list-inside text-white/70 space-y-1">
@@ -368,7 +370,7 @@ export default function TaskPage() {
                         )}
                       </ul>
                     </div>
-                    
+
                     {task.resources && JSON.parse(task.resources).hints && (
                       <div>
                         <h3 className="text-sm font-medium text-white/50 mb-1">Hints</h3>
@@ -388,7 +390,7 @@ export default function TaskPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Feedback Dialog */}
       <Dialog open={showFeedback} onOpenChange={setShowFeedback}>
         <DialogContent className="bg-black/90 backdrop-blur-md border border-white/10 text-white">
@@ -398,7 +400,7 @@ export default function TaskPage() {
               Here's how you performed on this task.
             </DialogDescription>
           </DialogHeader>
-          
+
           {feedback && (
             <div className="py-4">
               <div className="grid grid-cols-3 gap-4 mb-6">
@@ -415,19 +417,19 @@ export default function TaskPage() {
                   <div className="text-sm text-white/50">Speed</div>
                 </div>
               </div>
-              
+
               <div className="border border-white/10 rounded-lg p-4 bg-white/5 mb-6">
                 <h3 className="font-medium mb-2">Feedback</h3>
                 <p className="text-white/70">{feedback.feedback}</p>
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
-            <Button 
+            <Button
               className="w-full"
-              style={{ 
-                background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)` 
+              style={{
+                background: `linear-gradient(to right, ${roleColor}, ${roleColor}CC)`
               }}
               onClick={handleContinue}
             >

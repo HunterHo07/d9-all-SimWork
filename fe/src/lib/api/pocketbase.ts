@@ -9,15 +9,15 @@ export function initPocketBase() {
     // Server-side: create a new instance every time
     return new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090');
   }
-  
+
   // Client-side: reuse the instance
   if (!pb) {
     pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090');
-    
+
     // Load auth from localStorage (handled automatically by PocketBase)
     // This ensures auth persistence across page refreshes
   }
-  
+
   return pb;
 }
 
@@ -109,27 +109,38 @@ export const api = {
       });
       return user;
     },
-    
+
     login: async (email: string, password: string) => {
       const pb = getPocketBase();
       const authData = await pb.collection('users').authWithPassword(email, password);
       return authData;
     },
-    
+
     logout: () => {
       const pb = getPocketBase();
       pb.authStore.clear();
     },
-    
+
     getUser: async () => {
       const pb = getPocketBase();
       if (pb.authStore.isValid) {
-        return pb.authStore.model as User;
+        // Convert the auth model to our User type
+        const model = pb.authStore.model;
+        if (model) {
+          return {
+            id: model.id,
+            email: model.email as string,
+            name: model.name as string,
+            avatar: model.avatar as string,
+            created: model.created,
+            updated: model.updated,
+          } as User;
+        }
       }
       return null;
     },
   },
-  
+
   // Roles
   roles: {
     getAll: async () => {
@@ -137,14 +148,14 @@ export const api = {
       const records = await pb.collection('roles').getFullList<Role>();
       return records;
     },
-    
+
     getById: async (id: string) => {
       const pb = getPocketBase();
       const record = await pb.collection('roles').getOne<Role>(id);
       return record;
     },
   },
-  
+
   // Simulations
   simulations: {
     getAll: async () => {
@@ -154,7 +165,7 @@ export const api = {
       });
       return records;
     },
-    
+
     getById: async (id: string) => {
       const pb = getPocketBase();
       const record = await pb.collection('simulations').getOne<Simulation>(id, {
@@ -162,7 +173,7 @@ export const api = {
       });
       return record;
     },
-    
+
     getByRole: async (roleId: string) => {
       const pb = getPocketBase();
       const records = await pb.collection('simulations').getFullList<Simulation>({
@@ -172,7 +183,7 @@ export const api = {
       return records;
     },
   },
-  
+
   // Tasks
   tasks: {
     getAll: async () => {
@@ -183,7 +194,7 @@ export const api = {
       });
       return records;
     },
-    
+
     getById: async (id: string) => {
       const pb = getPocketBase();
       const record = await pb.collection('tasks').getOne<Task>(id, {
@@ -191,7 +202,7 @@ export const api = {
       });
       return record;
     },
-    
+
     getBySimulation: async (simulationId: string) => {
       const pb = getPocketBase();
       const records = await pb.collection('tasks').getFullList<Task>({
@@ -202,7 +213,7 @@ export const api = {
       return records;
     },
   },
-  
+
   // Results
   results: {
     getAll: async () => {
@@ -212,7 +223,7 @@ export const api = {
       });
       return records;
     },
-    
+
     getById: async (id: string) => {
       const pb = getPocketBase();
       const record = await pb.collection('results').getOne<Result>(id, {
@@ -220,7 +231,7 @@ export const api = {
       });
       return record;
     },
-    
+
     getByUser: async (userId: string) => {
       const pb = getPocketBase();
       const records = await pb.collection('results').getFullList<Result>({
@@ -229,13 +240,13 @@ export const api = {
       });
       return records;
     },
-    
+
     create: async (data: Partial<Result>) => {
       const pb = getPocketBase();
       const record = await pb.collection('results').create<Result>(data);
       return record;
     },
-    
+
     update: async (id: string, data: Partial<Result>) => {
       const pb = getPocketBase();
       const record = await pb.collection('results').update<Result>(id, data);

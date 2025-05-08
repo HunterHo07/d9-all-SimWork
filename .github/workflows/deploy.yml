@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to Vercel
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,18 +19,19 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'fe/package-lock.json'
 
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
       - name: Install dependencies
         run: |
           cd fe
           npm ci
 
-      - name: Build
+      - name: Deploy to Vercel
         run: |
           cd fe
-          npm run build
-
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: fe/out
-          branch: gh-pages
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
